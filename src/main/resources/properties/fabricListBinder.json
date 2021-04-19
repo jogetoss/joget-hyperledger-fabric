@@ -1,0 +1,138 @@
+[{
+    title : '@@hyperledger.fabricTool.config@@',
+    properties : [{
+        name : 'userId',
+        label : '@@hyperledger.fabricTool.userId@@',
+        type : 'textfield',
+        required : 'true'
+    },
+    {
+        name : 'affiliation',
+        label : '@@hyperledger.fabricTool.affiliation@@',
+        type : 'textfield',
+        required : 'true'
+    },
+    {
+        name : 'mspId',
+        label : '@@hyperledger.fabricTool.mspId@@',
+        type : 'textfield',
+        required : 'true'
+    },
+    {
+        name : 'registerNewUser',
+        label : '@@hyperledger.fabricTool.registerNewUser@@',
+        type : 'radio',
+        value : 'true',
+        options : [{
+            value : 'false',
+            label : '@@hyperledger.fabricTool.existingUser@@'
+        },
+        {
+            value : 'true',
+            label : '@@hyperledger.fabricTool.newUser@@'
+        }]
+    },
+    {
+        name : 'userCert',
+        label : '@@hyperledger.fabricTool.userCert@@',
+        type : 'textarea',
+        control_field: 'registerNewUser',
+        control_value: 'false',
+        control_use_regex: 'false',
+        required:'true'
+    },
+    {
+        name : 'userPrivateKey',
+        label : '@@hyperledger.fabricTool.userPrivateKey@@',
+        type : 'textarea',
+        control_field: 'registerNewUser',
+        control_value: 'false',
+        control_use_regex: 'false',
+        required:'true'
+    },
+    {
+        name : 'adminId',
+        label : '@@hyperledger.fabricTool.adminId@@',
+        type : 'textfield',
+        control_field: 'registerNewUser',
+        control_value: 'true',
+        control_use_regex: 'false',
+        required:'true'
+    },
+    {
+        name : 'adminSecret',
+        label : '@@hyperledger.fabricTool.adminSecret@@',
+        type : 'password',
+        control_field: 'registerNewUser',
+        control_value: 'true',
+        control_use_regex: 'false',
+        required:'true'
+    },
+    {
+        name : 'connectionProfileJson',
+        label : '@@hyperledger.fabricTool.connectionProfileJson@@',
+        type : 'textarea',
+        required : 'true'
+    }]
+},
+{
+    title : '@@hyperledger.fabricTool.configTransaction@@',
+    properties : [{
+        name : 'chaincodeId',
+        label : '@@hyperledger.fabricTool.chaincodeId@@',
+        type : 'textfield',
+        required : 'true'
+    },
+    {
+        name : 'functionName',
+        label : '@@hyperledger.fabricTool.functionName@@',
+        type : 'textfield',
+        required : 'true'
+    },
+    {
+        name : 'functionArgs',
+        label : '@@hyperledger.fabricTool.functionArgs@@',
+        type : 'grid',
+        columns : [{
+            key : 'functionArgs',
+            label : '@@hyperledger.fabricTool.functionArgs@@'
+        }]
+    },
+    {
+        name : 'primaryKey',
+        label : '@@hyperledger.fabricListBinder.primaryKey@@',
+        type : 'textfield',
+        required : 'true'
+    },
+    {
+        name : 'nestedPropertyFlag',
+        label : '@@hyperledger.fabricListBinder.nestedPropertyResponse@@',
+        type : 'checkbox',
+        options : [{
+            value : 'true',
+            label : ''
+        }]
+    },
+    {
+        name : 'nestedProperty',
+        label : '@@hyperledger.fabricListBinder.nestedProperty@@',
+        type : 'grid',
+        columns : [{
+            key : 'nestedProperty',
+            label : '@@hyperledger.fabricListBinder.propertyName@@'
+        }],
+        control_field: 'nestedPropertyFlag',
+        control_value: 'true',
+        control_use_regex: 'false',
+        required:'true'
+    },
+    {
+        name : 'debugMode',
+        label : '@@hyperledger.fabricTool.debugMode@@',
+        type : 'checkbox',
+        options : [{
+            value : 'true',
+            label : ''
+        }]
+    }]
+}]
