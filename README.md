@@ -25,6 +25,8 @@ To test and build, install Hyperledger Fabric v2.0 and the Fabcar Network Sample
 
 # Getting Help
 
+Documentation is available at https://dev.joget.org/community/display/DX7/Blockchain+Hyperledger+Fabric+Plugins
+
 JogetOSS is a community-led team for open source software related to the [Joget](https://github.com/jogetworkflow/jw-community) no-code/low-code application platform.
 Projects under JogetOSS are community-driven and community-supported.
 To obtain support, ask questions, get answers and help others, please participate in the [Community Q&A](https://answers.joget.org/).
