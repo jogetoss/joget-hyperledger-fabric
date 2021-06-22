@@ -32,7 +32,7 @@ public class FabricFormBinder extends FormBinder implements FormLoadBinder, Form
 
     @Override
     public String getVersion() {
-        return "6.2.1";
+        return "6.2.2";
     }
 
     @Override

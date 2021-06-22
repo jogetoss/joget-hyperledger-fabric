@@ -37,7 +37,7 @@ public class FabricTool extends JsonTool {
 
     @Override
     public String getVersion() {
-        return "6.2.1";
+        return "6.2.2";
     }
 
     @Override
