@@ -37,7 +37,7 @@ public class FabricTool extends JsonTool {
 
     @Override
     public String getVersion() {
-        return "6.2.2";
+        return "7.0.0";
     }
 
     @Override
@@ -69,14 +69,14 @@ public class FabricTool extends JsonTool {
         boolean status = true;
 
         // debug mode flag to output additional log messages
-        boolean debug = Boolean.valueOf((String) properties.get("debugMode"));
+        boolean debug = Boolean.parseBoolean((String) properties.get("debugMode"));
 
         // get workflow assignment to process hash variables
         WorkflowAssignment wfAssignment = (WorkflowAssignment) properties.get("workflowAssignment");
 
         try {
             // flag to register a new user
-            boolean registerNewUser = Boolean.valueOf((String) properties.get("registerNewUser"));
+            boolean registerNewUser = Boolean.parseBoolean((String) properties.get("registerNewUser"));
 
             // user credentials
             String userId = WorkflowUtil.processVariable((String) properties.get("userId"), null, wfAssignment);
@@ -109,11 +109,11 @@ public class FabricTool extends JsonTool {
             ArrayList<String> argList = new ArrayList<>();
             Object[] paramsValues = (Object[]) properties.get("functionArgs");
             for (Object o : paramsValues) {
-                String args;
+                String args = "";
                 if (o instanceof Map) {
                     Map mapping = (HashMap) o;
                     args = mapping.get("functionArgs").toString();
-                } else {
+                } else if (o != null) {
                     args = o.toString();
                 }
                 argList.add(WorkflowUtil.processVariable(args, "", wfAssignment));
@@ -209,7 +209,7 @@ public class FabricTool extends JsonTool {
     @Override
     protected void storeToForm(WorkflowAssignment wfAssignment, Map properties, Map object) {
         super.storeToForm(wfAssignment, properties, object);
-        boolean debug = Boolean.valueOf((String) properties.get("debugMode"));
+        boolean debug = Boolean.parseBoolean((String) properties.get("debugMode"));
         if (debug) {
             String formDefId = (String) properties.get("formDefId");
             String functionName = WorkflowUtil.processVariable((String) properties.get("functionName"), null, wfAssignment);
@@ -220,7 +220,7 @@ public class FabricTool extends JsonTool {
     @Override
     protected void storeToWorkflowVariable(WorkflowAssignment wfAssignment, Map properties, Map object) {
         super.storeToWorkflowVariable(wfAssignment, properties, object);
-        boolean debug = Boolean.valueOf((String) properties.get("debugMode"));
+        boolean debug = Boolean.parseBoolean((String) properties.get("debugMode"));
         if (debug) {
             String functionName = WorkflowUtil.processVariable((String) properties.get("functionName"), null, wfAssignment);
             LogUtil.info(getClass().getName(), "Transaction response for " + functionName + " saved to workflow variables");
@@ -268,7 +268,7 @@ public class FabricTool extends JsonTool {
             FormRowSet rowSet = new FormRowSet();
             rowSet.add(row);
             appService.storeFormData(appDef.getId(), appDef.getVersion().toString(), formDefId, rowSet, null);
-            boolean debug = Boolean.valueOf((String) properties.get("debugMode"));
+            boolean debug = Boolean.parseBoolean((String) properties.get("debugMode"));
             if (debug) {
                 LogUtil.info(getClass().getName(), "Transaction status " + status + " saved to form field " + formDefId + "." + fieldName);
             }
@@ -287,7 +287,7 @@ public class FabricTool extends JsonTool {
             ApplicationContext ac = AppUtil.getApplicationContext();
             WorkflowManager workflowManager = (WorkflowManager) ac.getBean("workflowManager");
             workflowManager.activityVariable(wfAssignment.getActivityId(), statusVariableMapping, status);
-            boolean debug = Boolean.valueOf((String) properties.get("debugMode"));
+            boolean debug = Boolean.parseBoolean((String) properties.get("debugMode"));
             if (debug) {
                 LogUtil.info(getClass().getName(), "Transaction status " + status + " saved to workflow variable " + statusVariableMapping);
             }

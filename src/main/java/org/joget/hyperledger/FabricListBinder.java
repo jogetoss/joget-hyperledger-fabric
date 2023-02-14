@@ -31,7 +31,7 @@ public class FabricListBinder extends DataListBinderDefault {
 
     @Override
     public String getVersion() {
-        return "6.2.2";
+        return "7.0.0";
     }
 
     @Override

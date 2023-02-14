@@ -2,7 +2,10 @@ package org.joget.hyperledger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.InstanceCreator;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +37,6 @@ import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.hyperledger.fabric.sdk.BlockEvent;
-import org.hyperledger.fabric.sdk.ChaincodeID;
 import org.hyperledger.fabric.sdk.Channel;
 import org.hyperledger.fabric.sdk.Enrollment;
 import org.hyperledger.fabric.sdk.HFClient;
@@ -55,6 +57,7 @@ import org.joget.commons.util.SetupManager;
 import org.joget.workflow.model.WorkflowAssignment;
 import org.joget.workflow.util.WorkflowUtil;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -206,30 +209,21 @@ public class FabricUtil {
         String json = FileUtils.readFileToString(jsonFile, "UTF-8");
 
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Enrollment.class, new InstanceCreator<Enrollment>() {
+        builder.registerTypeAdapter(Enrollment.class, new JsonDeserializer<Enrollment>() {
             @Override
-            public Enrollment createInstance(Type type) {
+            public Enrollment deserialize(final JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
                 return new Enrollment() {
-                    String cert;
-
                     @Override
                     public PrivateKey getKey() {
                         return null;
                     }
 
-                    public void setKey(PrivateKey key) {
-                    }
-
                     @Override
                     public String getCert() {
-                        return this.cert;
+                        return json.getAsJsonObject().get("cert").getAsString();
                     }
-
-                    public void setCert(String cert) {
-                        this.cert = cert;
-                    }
-                };
-            }
+                };                
+            };            
         });
 
         FabricUser appUser = builder.create().fromJson(json, FabricUser.class);
@@ -297,8 +291,7 @@ public class FabricUtil {
         // peer name and endpoint in fabcar network
         Peer peer = client.newPeer(peerName, peerUrl, peerProps);
         Channel channel = client.newChannel(channelName);
-        Channel.PeerOptions peerOptions = Channel.PeerOptions.createPeerOptions().createPeerOptions()
-                                .setPeerRoles(EnumSet.allOf(Peer.PeerRole.class));
+        Channel.PeerOptions peerOptions = Channel.PeerOptions.createPeerOptions().setPeerRoles(EnumSet.allOf(Peer.PeerRole.class));
         channel.addPeer(peer, peerOptions);
         
         if (ordererName != null && ordererUrl != null) {
@@ -472,7 +465,7 @@ public class FabricUtil {
                 Object caCertObj = certAuth.getJSONObject("tlsCACerts").get("pem");
                 if (caCertObj instanceof JSONArray) {
                     caCert = ((JSONArray)caCertObj).getString(0);
-                } else {
+                } else if (caCertObj != null) {
                     caCert = caCertObj.toString();
                 }
                 connectionProfileMap.put("caCert", caCert);
@@ -504,7 +497,7 @@ public class FabricUtil {
                 }
             }
             
-        } catch (Exception e) {
+        } catch (JSONException e) {
             LogUtil.error(FabricUtil.class.getName(), e, e.getMessage());
         }
         return connectionProfileMap;
@@ -519,14 +512,14 @@ public class FabricUtil {
         JSONArray resultArray = new JSONArray();
 
         // debug mode flag to output additional log messages
-        boolean debug = Boolean.valueOf((String) properties.get("debugMode"));
+        boolean debug = Boolean.parseBoolean((String) properties.get("debugMode"));
 
         // get workflow assignment to process hash variables
         WorkflowAssignment wfAssignment = (WorkflowAssignment) properties.get("workflowAssignment");
 
         try {
             // flag to register a new user
-            boolean registerNewUser = Boolean.valueOf((String) properties.get("registerNewUser"));
+            boolean registerNewUser = Boolean.parseBoolean((String) properties.get("registerNewUser"));
 
             // user credentials
             String userId = WorkflowUtil.processVariable((String) properties.get("userId"), null, wfAssignment);
@@ -557,11 +550,11 @@ public class FabricUtil {
             ArrayList<String> argList = new ArrayList<>();
             Object[] paramsValues = (Object[]) properties.get("functionArgs");
             for (Object o : paramsValues) {
-                String args;
+                String args = "";
                 if (o instanceof Map) {
                     Map mapping = (HashMap) o;
                     args = mapping.get("functionArgs").toString();
-                } else {
+                } else if (o != null) {
                     args = o.toString();
                 }
                 argList.add(WorkflowUtil.processVariable(args, "", wfAssignment));
